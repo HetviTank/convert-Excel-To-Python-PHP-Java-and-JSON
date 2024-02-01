@@ -1,0 +1,192 @@
+<!-- templates/excel_to_json.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Add Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <style>
+        .file-upload-section {
+            margin: 20px auto;
+            padding: 40px;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* Highlight the upload section when dragging a file over it */
+        .file-upload-section.dragover {
+            background-color: #f0f8ff;
+            /* Light blue background */
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+            width: 70%;
+            /* Adjust the width as needed */
+            text-align: center;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 50px auto;
+            /* Center the card */
+        }
+
+        .card-title {
+            padding: 20px;
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        form p {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        form input {
+            display: none;
+        }
+
+        form label {
+            cursor: pointer;
+            color: #3498db;
+        }
+
+        .btn-group button {
+            margin: 5px;
+            /* Adjust margin as needed */
+            padding: 10px 20px;
+            /* Adjust padding as needed */
+            background-color: #40afe2;
+            /* Add background color */
+            color: #fff;
+            /* Add text color */
+            border: none;
+            border-radius: 4px;
+            transition: all .2s ease;
+        }
+
+        .btn-group button:hover {
+            background: #218838;
+        }
+
+        .btn-group button:active {
+            border: 0;
+        }
+
+        form button {
+            margin-top: 20px;
+            color: #fff;
+            background: #28a745;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border-bottom: 4px solid #218838;
+            transition: all .2s ease;
+        }
+
+        form button:hover {
+            background: #218838;
+        }
+
+        form button:active {
+            border: 0;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            overflow-x: auto;
+        }
+    </style>
+
+    <div class="card shadow-lg card-flush pt-3 mb-5 mb-lg-10">
+        <!-- Card header -->
+        <div class="card-title">
+            <h2 class="fw-bolder">Excel to JSON/Python/Java/PHP Converter</h2>
+        </div>
+
+        <!-- File upload form card body -->
+        <div class="form-card">
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="file-upload-section" id="file-upload" ondragover="handleDragOver(event)"
+                    ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)">
+
+                    {{ form }}
+                    <p>Drag your Excel file here or click to browse.</p>
+                    <input type="file" name="excel_file" id="excel-file" accept=".xls, .xlsx" style="display: none;">
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label>Choose Conversion Type</label>
+                    </div>
+
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="setConversionType('json')">JSON</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="setConversionType('python')">Python</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="setConversionType('java')">Java</button>
+                        <button type="button" class="btn btn-secondary" onclick="setConversionType('php')">PHP</button>
+                    </div>
+                    <input type="hidden" name="conversion_type" id="conversion_type" value="json">
+                </div>
+                <button type="submit" name="action" value="convert">Convert</button>
+            </form>
+        </div>
+
+        {% if conversion_type %}
+        <h3>{{ conversion_type|capfirst }} Data:</h3>
+        {% if output_data %}
+        <pre>{{ output_data|safe }}</pre>
+        {% else %}
+        <p>No data to display.</p>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js if needed -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    <script>
+        function setConversionType(type) {
+            document.getElementById('conversion_type').value = type;
+        }
+    </script>
+
+</body>
+
+</html>
