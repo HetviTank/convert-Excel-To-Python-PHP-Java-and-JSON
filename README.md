@@ -17,6 +17,10 @@ Install Django and Pandas using:
 ```bash
 pip install django pandas
 
+Run Project🚀
+
+```python manage.py runserver
+
 
 Run the Project:
 
