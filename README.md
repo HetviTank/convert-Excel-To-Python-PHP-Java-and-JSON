@@ -15,10 +15,10 @@ Make sure you have the following installed:
 Install Django and Pandas using:
 
 ```bash
-pip install django pandas
+pip install django pandas```
 
 Run Project🚀
 
-``````bash
+```bash
 python manage.py runserver
 
