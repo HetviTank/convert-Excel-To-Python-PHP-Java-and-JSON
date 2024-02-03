@@ -12,7 +12,7 @@ Make sure you have the following installed:
 - Django
 - Pandas
 
-## Run the Project 🛠️
+## Run the Project 🚀
     python manage.py runserver
     
 Install Django and Pandas using:
