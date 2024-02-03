@@ -19,10 +19,6 @@ pip install django pandas
 
 Run Project🚀
 
-```python manage.py runserver
-
-
-Run the Project:
-
-```bash
+``````bash
 python manage.py runserver
+
